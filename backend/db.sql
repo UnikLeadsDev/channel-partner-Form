@@ -82,3 +82,12 @@ CREATE TABLE `partner_documents` (
   FOREIGN KEY (`partner_id`) REFERENCES `channel_partners`(`id`) ON DELETE CASCADE
 );
 
+
+-- Table updations changes 
+ALTER TABLE `channel_partners`
+  ADD COLUMN `father_name` VARCHAR(200) AFTER `mother_name`,
+  ADD COLUMN `current_address_line1` VARCHAR(255) AFTER `current_address`,
+  ADD COLUMN `current_address_line2` VARCHAR(255) AFTER `current_address_line1`,
+  ADD COLUMN `permanent_address_line1` VARCHAR(255) AFTER `permanent_address`,
+  ADD COLUMN `permanent_address_line2` VARCHAR(255) AFTER `permanent_address_line1`,
+  ADD COLUMN `applicant_credit_report_url` VARCHAR(255) AFTER `applicant_photo_url`;
