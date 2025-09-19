@@ -82,3 +82,62 @@ CREATE TABLE `partner_documents` (
   FOREIGN KEY (`partner_id`) REFERENCES `channel_partners`(`id`) ON DELETE CASCADE
 );
 
+
+-- Table changes to add the new columns 
+ALTER TABLE channel_partners
+DROP COLUMN age;
+
+
+ALTER TABLE channel_partners
+ADD COLUMN father_name VARCHAR(200),
+ADD COLUMN current_address_line1 VARCHAR(255),
+ADD COLUMN current_address_line2 VARCHAR(255),
+ADD COLUMN permanent_address_line1 VARCHAR(255),
+ADD COLUMN permanent_address_line2 VARCHAR(255),
+ADD COLUMN current_locality VARCHAR(255),
+ADD COLUMN nearby_landmark VARCHAR(255),
+ADD COLUMN channel_partner_education VARCHAR(255),
+ADD COLUMN applicant_credit_report_url VARCHAR(255);
+
+ALTER TABLE channel_partners
+DROP COLUMN father_name,
+DROP COLUMN current_address_line1,
+DROP COLUMN current_address_line2,
+DROP COLUMN permanent_address_line1,
+DROP COLUMN permanent_address_line2,
+DROP COLUMN current_locality,
+DROP COLUMN nearby_landmark,
+DROP COLUMN channel_partner_education,
+DROP COLUMN applicant_credit_report_url;
+
+ALTER TABLE channel_partners
+ADD COLUMN father_name VARCHAR(200) AFTER last_name;
+
+ALTER TABLE channel_partners
+CHANGE current_address current_address1 TEXT,
+CHANGE current_pincode current_pincode1 VARCHAR(10),
+CHANGE current_state current_state1 VARCHAR(100),
+CHANGE current_district current_district1 VARCHAR(100),
+CHANGE current_city current_city1 VARCHAR(100);
+
+ALTER TABLE channel_partners
+ADD COLUMN current_address2 TEXT AFTER current_city1,
+ADD COLUMN current_pincode2 VARCHAR(10) AFTER current_address2,
+ADD COLUMN current_state2 VARCHAR(100) AFTER current_pincode2,
+ADD COLUMN current_district2 VARCHAR(100) AFTER current_state2,
+ADD COLUMN current_city2 VARCHAR(100) AFTER current_district2;
+
+ALTER TABLE channel_partners
+CHANGE permanent_address permanent_address1 TEXT,
+CHANGE permanent_pincode permanent_pincode1 VARCHAR(10),
+CHANGE permanent_state permanent_state1 VARCHAR(100),
+CHANGE permanent_district permanent_district1 VARCHAR(100),
+CHANGE permanent_city permanent_city1 VARCHAR(100);
+
+ALTER TABLE channel_partners
+ADD COLUMN permanent_address2 TEXT AFTER permanent_city1,
+ADD COLUMN permanent_pincode2 VARCHAR(10) AFTER permanent_address2,
+ADD COLUMN permanent_state2 VARCHAR(100) AFTER permanent_pincode2,
+ADD COLUMN permanent_district2 VARCHAR(100) AFTER permanent_state2,
+ADD COLUMN permanent_city2 VARCHAR(100) AFTER permanent_district2;
+

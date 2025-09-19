@@ -98,104 +98,151 @@ export default function App() {
     const [error, setError] = useState(null);
 
     // --- 1. DATA FETCHING: This useEffect runs once when the component mounts ---
-    useEffect(() => {
-        const fetchPartnerData = async () => {
-            try {
-                setIsLoading(true);
-                const response = await fetch(`http://localhost:5000/api/partners/${PARTNER_ID}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data = await response.json();
-                
-                // --- Fully map all database fields to form state ---
-                const mappedData = {
-                    applicationReferenceId: data.application_reference_id,
-                    applicationDate: data.application_date?.split('T')[0],
-                    applicationRefBy: data.application_ref_by,
-                    applicantClass: data.applicant_class,
-                    firstName: data.first_name,
-                    middleName: data.middle_name,
-                    lastName: data.last_name,
-                    dob: data.date_of_birth?.split('T')[0],
-                    age: data.age,
-                    gender: data.gender,
-                    aadharNumber: data.aadhar_number,
-                    panCardNumber: data.pan_card_number,
-                    mobileNumber: data.mobile_number,
-                    emailId: data.email_id,
-                    maritalStatus: data.marital_status,
-                    spouseName: data.spouse_name,
-                    motherName: data.mother_name,
-                    education: data.education,
-                    occupation: data.occupation,
-                    applicantPhotoUrl: data.applicant_photo_url,
-                    currentAddress: data.current_address,
-                    currentPincode: data.current_pincode,
-                    currentState: data.current_state,
-                    currentDistrict: data.current_district,
-                    currentCity: data.current_city,
-                    currentLocality: data.current_locality,
-                    currentLandmark: data.current_landmark,
-                    currentLatitude: data.current_latitude,
-                    currentLongitude: data.current_longitude,
-                    permanentAddress: data.permanent_address,
-                    permanentPincode: data.permanent_pincode,
-                    permanentState: data.permanent_state,
-                    permanentDistrict: data.permanent_district,
-                    permanentCity: data.permanent_city,
-                    permanentLocality: data.permanent_locality,
-                    permanentLandmark: data.permanent_landmark,
-                    permanentLatitude: data.permanent_latitude,
-                    permanentLongitude: data.permanent_longitude,
-                    bankName: data.bank_name,
-                    accountHolderName: data.account_holder_name,
-                    bankAccountNumber: data.bank_account_number,
-                    ifscCode: data.ifsc_code,
-                    branchName: data.branch_name,
-                    accountType: data.bank_account_type,
-                    anyReason: data.final_decision_reason,
-                    finalDecision: data.final_decision,
-                    authSignature: data.authorized_person_signature_url,
-                    digitalOTP: data.digital_otp,
-                    ucCode: data.uc_code, 
-                    lcCode: data.lc_code, 
-                    authPersonName: data.authorized_person_name,
-                    designation: data.authorized_person_designation,
-                    employeeId: data.authorized_person_employee_id,
-                    approvalDate: data.approval_date?.split('T')[0],
-                };
-                
-                const kycDocs = data.documents || [];
-                kycDocs.forEach(doc => {
-                    if (doc.document_proof_type?.includes('PAN')) mappedData.kycPanNumber = doc.document_number;
-                    if (doc.document_proof_type?.includes('Aadhar')) mappedData.kycAadharNumber = doc.document_number;
-                    if (doc.document_proof_type?.includes('Address Proof')) mappedData.kycElecBillNumber = doc.document_number;
-                    if (doc.document_proof_type?.includes('firm documents')) mappedData.kycShopActNumber = doc.document_number;
-                });
-
-                setFormData(mappedData);
-                setDocuments(kycDocs);
-
-                // --- Set initial section statuses from the fetched data ---
-                setSectionStatuses({
-                    applicant_details: data.applicant_details_status,
-                    current_address: data.current_address_status,
-                    permanent_address: data.permanent_address_status,
-                    kyc_documents: data.kyc_documents_status,
-                    banking_details: data.banking_details_status,
-                });
-
-            } catch (e) {
-                console.error("Failed to fetch partner data:", e);
-                setError("Could not load application data. Please ensure the backend server is running and reachable.");
-            } finally {
-                setIsLoading(false);
+    // --- 1. DATA FETCHING: This useEffect runs once when the component mounts ---
+// --- 1. DATA FETCHING: This useEffect runs once when the component mounts ---
+useEffect(() => {
+    const fetchPartnerData = async () => {
+        try {
+            setIsLoading(true);
+            const response = await fetch(`http://localhost:5000/api/partners/${PARTNER_ID}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
-        };
+            const data = await response.json();
 
-        fetchPartnerData();
-    }, [PARTNER_ID]);
+            // --- Fully map all database fields to form state ---
+            const mappedData = {
+                applicationReferenceId: data.application_reference_id,
+                applicationDate: data.application_date?.split('T')[0],
+                applicationRefBy: data.application_ref_by,
+                applicantClass: data.applicant_class,
+                firstName: data.first_name,
+                middleName: data.middle_name,
+                lastName: data.last_name,
+                fatherName: data.father_name,
+                dob: data.date_of_birth?.split('T')[0],
+                gender: data.gender,
+                aadharNumber: data.aadhar_number,
+                panCardNumber: data.pan_card_number,
+                mobileNumber: data.mobile_number,
+                emailId: data.email_id,
+                maritalStatus: data.marital_status,
+                spouseName: data.spouse_name,
+                motherName: data.mother_name,
+                education: data.education,
+                occupation: data.occupation,
+                applicantPhotoUrl: data.applicant_photo_url,
+
+                // ✅ Current Address 1
+                currentAddress1: data.current_address1,
+                currentPincode1: data.current_pincode1,
+                currentState1: data.current_state1,
+                currentDistrict1: data.current_district1,
+                currentCity1: data.current_city1,
+                currentLocality1: data.current_locality1,
+                currentLandmark1: data.current_landmark1,
+
+                // ✅ Current Address 2
+                currentAddress2: data.current_address2,
+                currentPincode2: data.current_pincode2,
+                currentState2: data.current_state2,
+                currentDistrict2: data.current_district2,
+                currentCity2: data.current_city2,
+                currentLocality2: data.current_locality2,
+                currentLandmark2: data.current_landmark2,
+
+                // ✅ Permanent Address 1
+                permanentAddress1: data.permanent_address1,
+                permanentPincode1: data.permanent_pincode1,
+                permanentState1: data.permanent_state1,
+                permanentDistrict1: data.permanent_district1,
+                permanentCity1: data.permanent_city1,
+                permanentLocality1: data.permanent_locality1,
+                permanentLandmark1: data.permanent_landmark1,
+
+                // ✅ Permanent Address 2
+                permanentAddress2: data.permanent_address2,
+                permanentPincode2: data.permanent_pincode2,
+                permanentState2: data.permanent_state2,
+                permanentDistrict2: data.permanent_district2,
+                permanentCity2: data.permanent_city2,
+                permanentLocality2: data.permanent_locality2,
+                permanentLandmark2: data.permanent_landmark2,
+
+                // ✅ Banking Details
+                bankName: data.bank_name,
+                accountHolderName: data.account_holder_name,
+                bankAccountNumber: data.bank_account_number,
+                ifscCode: data.ifsc_code,
+                branchName: data.branch_name,
+                accountType: data.bank_account_type,
+
+                // ✅ Final Decision
+                anyReason: data.final_decision_reason,
+                finalDecision: data.final_decision,
+                authSignature: data.authorized_person_signature_url,
+                digitalOTP: data.digital_otp,
+
+                // ✅ Approval Details
+                ucCode: data.uc_code,
+                lcCode: data.lc_code,
+                authPersonName: data.authorized_person_name,
+                designation: data.authorized_person_designation,
+                employeeId: data.authorized_person_employee_id,
+                approvalDate: data.approval_date?.split('T')[0],
+            };
+
+          // --- Map KYC documents ---
+const kycDocs = data.documents || [];
+kycDocs.forEach(doc => {
+    if (doc.document_proof_type?.includes('PAN')) {
+        mappedData.kycPanNumber = doc.document_number;
+    }
+    if (doc.document_proof_type?.includes('Aadhar')) {
+        mappedData.kycAadharNumber = doc.document_number;
+    }
+    if (doc.document_proof_type?.includes('Address Proof')) {
+        mappedData.kycElecBillNumber = doc.document_number;
+    }
+    if (doc.document_proof_type?.includes('firm documents')) {
+        mappedData.kycShopActNumber = doc.document_number;
+    }
+    // ✅ New: Channel Partner Education Document
+    if (doc.document_proof_type?.toLowerCase().includes('education')) {
+        mappedData.kycEducationDoc = doc.document_number;
+    }
+    // ✅ New: Channel Partner Credit Report
+    if (doc.document_proof_type?.toLowerCase().includes('credit report')) {
+        mappedData.kycCreditReport = doc.document_number;
+    }
+});
+
+
+            // --- Set state ---
+            setFormData(mappedData);
+            setDocuments(kycDocs);
+
+            // --- Section Statuses ---
+            setSectionStatuses({
+                applicant_details: data.applicant_details_status,
+                current_address: data.current_address_status,
+                permanent_address: data.permanent_address_status,
+                kyc_documents: data.kyc_documents_status,
+                banking_details: data.banking_details_status,
+            });
+
+        } catch (e) {
+            console.error("Failed to fetch partner data:", e);
+            setError("Could not load application data. Please ensure the backend server is running and reachable.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    fetchPartnerData();
+}, [PARTNER_ID]);
+
+
 
     // --- 2. API UPDATE: This function is called when an admin clicks Approved/Rejected ---
     const handleStatusChange = async (sectionKey, status) => {
@@ -344,8 +391,9 @@ export default function App() {
                             <div className="lg:col-span-1"><FormField label="First Name" id="firstName" value={formData.firstName} disabled /></div>
                             <div className="lg:col-span-1"><FormField label="Middle Name" id="middleName" value={formData.middleName} disabled /></div>
                             <div className="lg:col-span-1"><FormField label="Last Name" id="lastName" value={formData.lastName} disabled /></div>
+                            <div className="lg:col-span-2"><FormField label="Father Name" id="fatherName" value={formData.fatherName} disabled /></div>
                             <FormField label="Date of Birth" id="dob" type="date" value={formData.dob} disabled />
-                            <FormField label="Age" id="age" value={formData.age} disabled />
+                            
                             <FormField label="Gender" id="gender" value={formData.gender} disabled />
                             <div className="lg:col-span-2"><FormField label="Aadhar Number" id="aadharNumber" value={formData.aadharNumber} disabled /></div>
                             <div className="lg:col-span-2"><FormField label="PAN Card Number" id="panCardNumber" value={formData.panCardNumber} disabled /></div>
@@ -359,103 +407,342 @@ export default function App() {
                         </div>
                     </Section>
 
-                    <Section
-                        title="2. Applicant Current Address"
-                        sectionKey="current_address"
-                        onStatusChange={handleStatusChange}
-                    >
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                            <div className="lg:col-span-2"><FormField label="Current Address" id="currentAddress" value={formData.currentAddress} disabled /></div>
-                            <FormField label="Pin Code" id="currentPincode" value={formData.currentPincode} disabled />
-                            <FormField label="State" id="currentState" value={formData.currentState} disabled />
-                            <FormField label="District" id="currentDistrict" value={formData.currentDistrict} disabled />
-                            <FormField label="City" id="currentCity" value={formData.currentCity} disabled />
-                            <FormField label="Locality/Village" id="currentLocality" value={formData.currentLocality} disabled />
-                            <div className="lg:col-span-2"><FormField label="Near Landmark" id="currentLandmark" value={formData.currentLandmark} disabled /></div>
-                            <FormField label="Latitude" id="currentLatitude" value={formData.currentLatitude} disabled />
-                            <FormField label="Longitude" id="currentLongitude" value={formData.currentLongitude} disabled />
-                        </div>
-                    </Section>
+                   <Section
+    title="2. Applicant Current Address"
+    sectionKey="current_address"
+    onStatusChange={handleStatusChange}
+>
+    {/* ✅ Current Address 1 */}
+    <h4 className="text-sm font-semibold col-span-full">Current Address 1</h4>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        <div className="lg:col-span-2">
+            <FormField 
+                label="Address" 
+                id="currentAddress1" 
+                value={formData.currentAddress1} 
+                disabled 
+            />
+        </div>
+        <FormField 
+            label="Pin Code" 
+            id="currentPincode1" 
+            value={formData.currentPincode1} 
+            disabled 
+        />
+        <FormField 
+            label="State" 
+            id="currentState1" 
+            value={formData.currentState1} 
+            disabled 
+        />
+        <FormField 
+            label="District" 
+            id="currentDistrict1" 
+            value={formData.currentDistrict1} 
+            disabled 
+        />
+        <FormField 
+            label="City" 
+            id="currentCity1" 
+            value={formData.currentCity1} 
+            disabled 
+        />
+        {/* ✅ New Fields */}
+        <FormField 
+            label="Locality/Village" 
+            id="currentLocality1" 
+            value={formData.currentLocality1} 
+            disabled 
+        />
+        <div className="lg:col-span-2">
+            <FormField 
+                label="Near Landmark" 
+                id="currentLandmark1" 
+                value={formData.currentLandmark1} 
+                disabled 
+            />
+        </div>
+    </div>
 
-                    <Section
-                        title="3. Applicant Permanent Address"
-                        sectionKey="permanent_address"
-                        onStatusChange={handleStatusChange}
-                    >
-                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                            <div className="lg:col-span-2"><FormField label="Permanent Address" id="permanentAddress" value={formData.permanentAddress} disabled /></div>
-                            <FormField label="Pin Code" id="permanentPincode" value={formData.permanentPincode} disabled />
-                            <FormField label="State" id="permanentState" value={formData.permanentState} disabled />
-                            <FormField label="District" id="permanentDistrict" value={formData.permanentDistrict} disabled />
-                            <FormField label="City" id="permanentCity" value={formData.permanentCity} disabled />
-                            <FormField label="Locality/Village" id="permanentLocality" value={formData.permanentLocality} disabled />
-                            <div className="lg:col-span-2"><FormField label="Near Landmark" id="permanentLandmark" value={formData.permanentLandmark} disabled /></div>
-                            <FormField label="Latitude" id="permanentLatitude" value={formData.permanentLatitude} disabled />
-                            <FormField label="Longitude" id="permanentLongitude" value={formData.permanentLongitude} disabled />
-                        </div>
-                    </Section>
+    {/* ✅ Current Address 2 */}
+    <h4 className="text-sm font-semibold col-span-full mt-4">Current Address 2</h4>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        <div className="lg:col-span-2">
+            <FormField 
+                label="Address" 
+                id="currentAddress2" 
+                value={formData.currentAddress2} 
+                disabled 
+            />
+        </div>
+        <FormField 
+            label="Pin Code" 
+            id="currentPincode2" 
+            value={formData.currentPincode2} 
+            disabled 
+        />
+        <FormField 
+            label="State" 
+            id="currentState2" 
+            value={formData.currentState2} 
+            disabled 
+        />
+        <FormField 
+            label="District" 
+            id="currentDistrict2" 
+            value={formData.currentDistrict2} 
+            disabled 
+        />
+        <FormField 
+            label="City" 
+            id="currentCity2" 
+            value={formData.currentCity2} 
+            disabled 
+        />
+        {/* ✅ New Fields */}
+        <FormField 
+            label="Locality/Village" 
+            id="currentLocality2" 
+            value={formData.currentLocality2} 
+            disabled 
+        />
+        <div className="lg:col-span-2">
+            <FormField 
+                label="Near Landmark" 
+                id="currentLandmark2" 
+                value={formData.currentLandmark2} 
+                disabled 
+            />
+        </div>
+    </div>
+</Section>
 
-                    <Section
-                        title="4. Applicant KYC Documents"
-                        sectionKey="kyc_documents"
-                        onStatusChange={handleStatusChange}
-                    >
-                         <div className="space-y-2 border rounded-lg p-2">
-                             <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-gray-500 px-2 py-1">
-                                 <span>Applicant KYC Proof Type</span>
-                                 <span>Document Type</span>
-                                 <span>Document Number</span>
-                                 <span>Front Side</span>
-                                 <span>Back Side</span>
-                             </div>
-                            <div className="grid grid-cols-5 gap-4 items-center bg-gray-50 p-2 rounded-md">
-                                <div><p className="text-sm font-semibold">Applicant PAN Card</p></div>
-                                <div><p className="text-sm">ID Proof</p></div>
-                                <div><FormField id="kycPanNumber" value={formData.kycPanNumber} placeholder="PAN Number" disabled /></div>
-                                <FileUploadField label="Front" id="panFront" url={documents.find(d => d.document_proof_type?.includes('PAN'))?.front_side_url} />
-                                <FileUploadField label="Back" id="panBack" url={documents.find(d => d.document_proof_type?.includes('PAN'))?.back_side_url} />
-                            </div>
-                            <div className="grid grid-cols-5 gap-4 items-center bg-gray-50 p-2 rounded-md">
-                                <div><p className="text-sm font-semibold">Applicant Aadhar Card</p></div>
-                                <div><p className="text-sm">Address Card</p></div>
-                                <div><FormField id="kycAadharNumber" value={formData.kycAadharNumber} placeholder="Aadhar Number" disabled /></div>
-                                <FileUploadField label="Front" id="aadharFront" url={documents.find(d => d.document_proof_type?.includes('Aadhar'))?.front_side_url} />
-                                <FileUploadField label="Back" id="aadharBack" url={documents.find(d => d.document_proof_type?.includes('Aadhar'))?.back_side_url} />
-                            </div>
-                        </div>
-                        <div className="space-y-2 border rounded-lg p-2 mt-4">
-                             <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-gray-500 px-2 py-1">
-                                <span>Applicant Address Proof</span>
-                                <span>Document Type</span>
-                                <span>Document Number</span>
-                                <span>Front Side</span>
-                                <span>Back Side</span>
-                            </div>
-                            <div className="grid grid-cols-5 gap-4 items-center bg-gray-50 p-2 rounded-md">
-                                <div><p className="text-sm font-semibold">Applicant Address Proof</p></div>
-                                <div><p className="text-sm">Electricity Bill</p></div>
-                                <div><FormField id="kycElecBillNumber" value={formData.kycElecBillNumber} placeholder="Bill Number" disabled /></div>
-                                <FileUploadField label="Front" id="elecBillFront" url={documents.find(d => d.document_proof_type?.includes('Address Proof'))?.front_side_url} />
-                                <FileUploadField label="Back" id="elecBillBack" url={documents.find(d => d.document_proof_type?.includes('Address Proof'))?.back_side_url} />
-                            </div>
-                        </div>
-                        <div className="space-y-2 border rounded-lg p-2 mt-4">
-                             <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-gray-500 px-2 py-1">
-                                <span>Applicant have firm documents</span>
-                                <span>Document Type</span>
-                                <span>Document Number</span>
-                                <span>Front Side</span>
-                                <span>Back Side</span>
-                            </div>
-                            <div className="grid grid-cols-5 gap-4 items-center bg-gray-50 p-2 rounded-md">
-                                <div><p className="text-sm font-semibold">Applicant firm documents</p></div>
-                                <div><p className="text-sm">Shop Act</p></div>
-                                <div><FormField id="kycShopActNumber" value={formData.kycShopActNumber} placeholder="Document Number" disabled /></div>
-                                <FileUploadField label="Front" id="shopActFront" url={documents.find(d => d.document_proof_type?.includes('firm documents'))?.front_side_url} />
-                                <FileUploadField label="Back" id="shopActBack" url={documents.find(d => d.document_proof_type?.includes('firm documents'))?.back_side_url} />
-                            </div>
-                        </div>
-                    </Section>
+
+                   <Section
+    title="3. Applicant Permanent Address"
+    sectionKey="permanent_address"
+    onStatusChange={handleStatusChange}
+>
+    {/* ✅ Permanent Address 1 */}
+    <h4 className="text-sm font-semibold col-span-full">Permanent Address 1</h4>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        <div className="lg:col-span-2">
+            <FormField 
+                label="Address" 
+                id="permanentAddress1" 
+                value={formData.permanentAddress1} 
+                disabled 
+            />
+        </div>
+        <FormField 
+            label="Pin Code" 
+            id="permanentPincode1" 
+            value={formData.permanentPincode1} 
+            disabled 
+        />
+        <FormField 
+            label="State" 
+            id="permanentState1" 
+            value={formData.permanentState1} 
+            disabled 
+        />
+        <FormField 
+            label="District" 
+            id="permanentDistrict1" 
+            value={formData.permanentDistrict1} 
+            disabled 
+        />
+        <FormField 
+            label="City" 
+            id="permanentCity1" 
+            value={formData.permanentCity1} 
+            disabled 
+        />
+        {/* ✅ New Fields */}
+        <FormField 
+            label="Locality/Village" 
+            id="permanentLocality1" 
+            value={formData.permanentLocality1} 
+            disabled 
+        />
+        <div className="lg:col-span-2">
+            <FormField 
+                label="Near Landmark" 
+                id="permanentLandmark1" 
+                value={formData.permanentLandmark1} 
+                disabled 
+            />
+        </div>
+    </div>
+
+    {/* ✅ Permanent Address 2 */}
+    <h4 className="text-sm font-semibold col-span-full mt-4">Permanent Address 2</h4>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        <div className="lg:col-span-2">
+            <FormField 
+                label="Address" 
+                id="permanentAddress2" 
+                value={formData.permanentAddress2} 
+                disabled 
+            />
+        </div>
+        <FormField 
+            label="Pin Code" 
+            id="permanentPincode2" 
+            value={formData.permanentPincode2} 
+            disabled 
+        />
+        <FormField 
+            label="State" 
+            id="permanentState2" 
+            value={formData.permanentState2} 
+            disabled 
+        />
+        <FormField 
+            label="District" 
+            id="permanentDistrict2" 
+            value={formData.permanentDistrict2} 
+            disabled 
+        />
+        <FormField 
+            label="City" 
+            id="permanentCity2" 
+            value={formData.permanentCity2} 
+            disabled 
+        />
+        {/* ✅ New Fields */}
+        <FormField 
+            label="Locality/Village" 
+            id="permanentLocality2" 
+            value={formData.permanentLocality2} 
+            disabled 
+        />
+        <div className="lg:col-span-2">
+            <FormField 
+                label="Near Landmark" 
+                id="permanentLandmark2" 
+                value={formData.permanentLandmark2} 
+                disabled 
+            />
+        </div>
+    </div>
+</Section>
+
+
+                   <Section
+    title="4. Applicant KYC Documents"
+    sectionKey="kyc_documents"
+    onStatusChange={handleStatusChange}
+>
+    {/* ✅ PAN Card */}
+    <div className="space-y-2 border rounded-lg p-2">
+        <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-gray-500 px-2 py-1">
+            <span>Applicant KYC Proof Type</span>
+            <span>Document Type</span>
+            <span>Document Number</span>
+            <span>Front Side</span>
+            <span>Back Side</span>
+        </div>
+        <div className="grid grid-cols-5 gap-4 items-center bg-gray-50 p-2 rounded-md">
+            <div><p className="text-sm font-semibold">Applicant PAN Card</p></div>
+            <div><p className="text-sm">ID Proof</p></div>
+            <div><FormField id="kycPanNumber" value={formData.kycPanNumber} placeholder="PAN Number" disabled /></div>
+            <FileUploadField label="Front" id="panFront" url={documents.find(d => d.document_proof_type?.includes('PAN'))?.front_side_url} />
+            <FileUploadField label="Back" id="panBack" url={documents.find(d => d.document_proof_type?.includes('PAN'))?.back_side_url} />
+        </div>
+    </div>
+
+    {/* ✅ Aadhaar */}
+    <div className="space-y-2 border rounded-lg p-2 mt-4">
+        <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-gray-500 px-2 py-1">
+            <span>Applicant Aadhar Card</span>
+            <span>Document Type</span>
+            <span>Document Number</span>
+            <span>Front Side</span>
+            <span>Back Side</span>
+        </div>
+        <div className="grid grid-cols-5 gap-4 items-center bg-gray-50 p-2 rounded-md">
+            <div><p className="text-sm font-semibold">Applicant Aadhar Card</p></div>
+            <div><p className="text-sm">Address Card</p></div>
+            <div><FormField id="kycAadharNumber" value={formData.kycAadharNumber} placeholder="Aadhar Number" disabled /></div>
+            <FileUploadField label="Front" id="aadharFront" url={documents.find(d => d.document_proof_type?.includes('Aadhar'))?.front_side_url} />
+            <FileUploadField label="Back" id="aadharBack" url={documents.find(d => d.document_proof_type?.includes('Aadhar'))?.back_side_url} />
+        </div>
+    </div>
+
+    {/* ✅ Address Proof */}
+    <div className="space-y-2 border rounded-lg p-2 mt-4">
+        <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-gray-500 px-2 py-1">
+            <span>Applicant Address Proof</span>
+            <span>Document Type</span>
+            <span>Document Number</span>
+            <span>Front Side</span>
+            <span>Back Side</span>
+        </div>
+        <div className="grid grid-cols-5 gap-4 items-center bg-gray-50 p-2 rounded-md">
+            <div><p className="text-sm font-semibold">Applicant Address Proof</p></div>
+            <div><p className="text-sm">Electricity Bill</p></div>
+            <div><FormField id="kycElecBillNumber" value={formData.kycElecBillNumber} placeholder="Bill Number" disabled /></div>
+            <FileUploadField label="Front" id="elecBillFront" url={documents.find(d => d.document_proof_type?.includes('Address Proof'))?.front_side_url} />
+            <FileUploadField label="Back" id="elecBillBack" url={documents.find(d => d.document_proof_type?.includes('Address Proof'))?.back_side_url} />
+        </div>
+    </div>
+
+    {/* ✅ Firm Documents */}
+    <div className="space-y-2 border rounded-lg p-2 mt-4">
+        <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-gray-500 px-2 py-1">
+            <span>Applicant have firm documents</span>
+            <span>Document Type</span>
+            <span>Document Number</span>
+            <span>Front Side</span>
+            <span>Back Side</span>
+        </div>
+        <div className="grid grid-cols-5 gap-4 items-center bg-gray-50 p-2 rounded-md">
+            <div><p className="text-sm font-semibold">Applicant firm documents</p></div>
+            <div><p className="text-sm">Shop Act</p></div>
+            <div><FormField id="kycShopActNumber" value={formData.kycShopActNumber} placeholder="Document Number" disabled /></div>
+            <FileUploadField label="Front" id="shopActFront" url={documents.find(d => d.document_proof_type?.includes('firm documents'))?.front_side_url} />
+            <FileUploadField label="Back" id="shopActBack" url={documents.find(d => d.document_proof_type?.includes('firm documents'))?.back_side_url} />
+        </div>
+    </div>
+
+    {/* ✅ Channel Partner Education Document */}
+    <div className="space-y-2 border rounded-lg p-2 mt-4">
+        <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-gray-500 px-2 py-1">
+            <span>Channel Partner Education Document</span>
+            <span>Document Type</span>
+            <span>Document Number</span>
+            <span>Front Side</span>
+            <span>Back Side</span>
+        </div>
+        <div className="grid grid-cols-5 gap-4 items-center bg-gray-50 p-2 rounded-md">
+            <div><p className="text-sm font-semibold">Education Document</p></div>
+            <div><p className="text-sm">Degree/Certificate</p></div>
+            <div><FormField id="kycEducationDoc" value={formData.kycEducationDoc} placeholder="Education Doc Number" disabled /></div>
+            <FileUploadField label="Front" id="educationFront" url={documents.find(d => d.document_proof_type?.toLowerCase().includes('education'))?.front_side_url} />
+            <FileUploadField label="Back" id="educationBack" url={documents.find(d => d.document_proof_type?.toLowerCase().includes('education'))?.back_side_url} />
+        </div>
+    </div>
+
+    {/* ✅ Channel Partner Credit Report */}
+    <div className="space-y-2 border rounded-lg p-2 mt-4">
+        <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-gray-500 px-2 py-1">
+            <span>Channel Partner Credit Report</span>
+            <span>Document Type</span>
+            <span>Document Number</span>
+            <span>Front Side</span>
+            <span>Back Side</span>
+        </div>
+        <div className="grid grid-cols-5 gap-4 items-center bg-gray-50 p-2 rounded-md">
+            <div><p className="text-sm font-semibold">Credit Report</p></div>
+            <div><p className="text-sm">Credit Report</p></div>
+            <div><FormField id="kycCreditReport" value={formData.kycCreditReport} placeholder="Credit Report Number" disabled /></div>
+            <FileUploadField label="Front" id="creditReportFront" url={documents.find(d => d.document_proof_type?.toLowerCase().includes('credit report'))?.front_side_url} />
+            <FileUploadField label="Back" id="creditReportBack" url={documents.find(d => d.document_proof_type?.toLowerCase().includes('credit report'))?.back_side_url} />
+        </div>
+    </div>
+</Section>
+
 
                     <Section
                         title="5. Applicant Banking Details"
